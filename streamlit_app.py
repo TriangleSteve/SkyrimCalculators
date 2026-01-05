@@ -183,7 +183,7 @@ damage_df = pd.DataFrame({
 
 st.header("Results")
 
-st.metric(f"Displayed Weapon Damage", displayed_damage.__floor__())
+st.metric(f"Displayed Weapon Damage", round(displayed_damage))
 st.table(damage_df.style.format("{:.1f}"))
 
 # -----------------------------
