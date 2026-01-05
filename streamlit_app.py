@@ -1,14 +1,19 @@
 
 import streamlit as st
+import pandas as pd
 from functions import (
     calculate_displayed_damage,
+    calculate_tempering_bonus,
     power_attack_damage,
     sneak_attack_damage,
-    dual_wield_power_attack_damage,
     WEAPON_DATA,
     MIN_SKILL,
     MAX_SKILL,
 )
+
+# Initialize storage
+if "damage_results" not in st.session_state:
+    st.session_state.damage_results = []
 
 # -----------------------------
 # Streamlit UI
@@ -23,7 +28,6 @@ st.markdown(
 
 st.divider()
 
-
 # Weapon inputs
 st.header("Weapon")
 
@@ -32,9 +36,9 @@ weapon_type = st.selectbox(
     WEAPON_DATA.keys(),
 )
 
-label = st.text(weapon_type)
 skill_name = WEAPON_DATA[weapon_type]["skill_name"]
 perk_name = WEAPON_DATA[weapon_type]["perk_name"]
+power_perk_name = WEAPON_DATA[weapon_type]["power_name"]
 
 base_damage = st.number_input(
     "Weapon Base Damage (found on [UESP Weapon Reference](https://en.uesp.net/wiki/Skyrim:Weapons), e.g. Dragonbone Mace = 17)",
@@ -43,6 +47,16 @@ base_damage = st.number_input(
     step=1,
     value=18
 )
+if weapon_type == "Archery":
+    ammo_damage = st.number_input(
+        "Ammo Damage (found on [UESP Ammunition](https://en.uesp.net/wiki/Skyrim:Ammunition#Arrows), e.g. Dragonbone Arrows = 25)",
+        min_value=4,
+        max_value=35,
+        step=1,
+        value=24
+    )
+else:
+    ammo_damage = 0
 
 st.divider()
 
@@ -62,20 +76,29 @@ skill_perk_bonus = st.slider(
     min_value=0,
     max_value=5,
     value=5,
-    help="Placeholder for Armsman / Barbarian, etc.",
 )
+if weapon_type != "Dagger":
+    skill_enchantment_bonus = st.number_input(
+        f"Sum of Fortify {skill_name} Enchantments (%)",
+        min_value=0,
+        value=120,
+    ) / 100
 
-skill_enchantment_bonus = st.number_input(
-    f"Sum of Fortify {skill_name} Enchantments (%)",
-    min_value=0,
-    value=120,
-) / 100
+    skill_potion_bonus = st.number_input(
+        f"Fortify {skill_name} Potion (%)",
+        min_value=0,
+        value=50,
+    ) / 100
+else:
+    skill_enchantment_bonus = 0
+    skill_potion_bonus = 0
 
-skill_potion_bonus = st.number_input(
-    f"Fortify {skill_name} Potion (%)",
-    min_value=0,
-    value=50,
-) / 100
+if weapon_type != "Archery":
+    has_power_perk = st.checkbox(f"{power_perk_name} perk (25% standing power attack bonus with {skill_name})")
+    has_gloves = st.checkbox(f"Using sneak multiplier gloves (e.g. Cicero's gloves)")
+else:
+    has_power_perk = False
+    has_gloves = False
 
 skill_seeker_of_might = st.checkbox("Seeker of Might (+10% damage)")
 
@@ -110,38 +133,49 @@ if tempering:
     ) / 100
 
     smithing_seeker_of_might = st.checkbox("Seeker of Might (+10% smithing)")
+    
+    # Calculate the improvement from smithing
+    temper_improvement = calculate_tempering_bonus(
+        smithing_level,
+        smithing_perk_bonus,
+        smithing_enchantment_bonus,
+        smithing_potion_bonus,
+        smithing_seeker_of_might
+    )
 else:
     smithing_level = 0
     smithing_perk_bonus = False
     smithing_enchantment_bonus = 0
     smithing_potion_bonus = 0
     smithing_seeker_of_might = False
+    temper_improvement = 0
+
 
 st.divider()
 
 # -----------------------------
-# Calculations
+# Calculate final damage outputs
 # -----------------------------
 
 displayed_damage = calculate_displayed_damage(
     base_damage=base_damage,
+    ammo_damage=ammo_damage,
     skill_level=skill_level,
     perk_rank=skill_perk_bonus,
     fortify_enchantment=skill_enchantment_bonus,
     fortify_potion=skill_potion_bonus,
     seeker_of_might=skill_seeker_of_might,
-    tempering=tempering,
-    smithing_level=smithing_level,
-    smithing_perk=smithing_perk_bonus,
-    smithing_enchantment=smithing_enchantment_bonus,
-    smithing_potion=smithing_potion_bonus,
-    smithing_seeker=smithing_seeker_of_might,
+    temper_improvement=temper_improvement
 )
 
-power_attack = power_attack_damage(displayed_damage, weapon_type)
-sneak_attack = sneak_attack_damage(displayed_damage, weapon_type)
-dual_wield = dual_wield_power_attack_damage(displayed_damage)
+power_attack = power_attack_damage(displayed_damage, weapon_type, has_power_perk)
+sneak_attack = sneak_attack_damage(displayed_damage, weapon_type, has_gloves)
+power_sneak_attack = sneak_attack_damage(power_attack, weapon_type, has_gloves)
 
+damage_df = pd.DataFrame({
+     "Normal Attack":[displayed_damage, round(power_attack, 1)], 
+     "Sneak Attack":[round(sneak_attack, 1), round(power_sneak_attack, 1)]
+    }, index=["Normal Attack", "Power Attack"])
 
 # -----------------------------
 # Output
@@ -149,9 +183,54 @@ dual_wield = dual_wield_power_attack_damage(displayed_damage)
 
 st.header("Results")
 
-st.metric(f"Displayed Weapon Damage", f"{displayed_damage:.1f}")
-st.metric("Power Attack Damage", f"{power_attack:.1f}")
-st.metric("Sneak Attack Damage", f"{sneak_attack:.1f}")
-st.metric("Dual-Wield Power Attack Damage", f"{dual_wield:.1f}")
+st.metric(f"Displayed Weapon Damage", displayed_damage.__floor__())
+st.table(damage_df.style.format("{:.1f}"))
 
-st.caption("All formulas are placeholders and will be replaced with UESP-accurate values.")
+# -----------------------------
+# Session saves/download
+# -----------------------------
+
+st.divider()
+
+st.header("Export")
+
+st.caption("Save any number of outputs to the browser session and download them in a single CSV for comparison and reference. Output will contain additional columns than the data displayed below.")
+
+weapon_output_name = st.text_input("(Optional) add an easy to remember name (e.g. Dragonbone Sword max without potions/enchanting)")
+if st.button("Save to session"):
+    st.session_state.damage_results.append({
+        "Name": weapon_output_name,
+        "Weapon Type": weapon_type,
+        "Base Damage": base_damage,
+        "Ammo Damage (if applicable)": ammo_damage,
+        "Skill Level": skill_level,
+        "Weapon Perk Rank (e.g. Armsman)": skill_perk_bonus,
+        "Fortify Skill Enchantments": skill_enchantment_bonus,
+        "Fortify Skill Potion": skill_potion_bonus,
+        "Using power attack perk (e.g. Savage Strike)": has_power_perk,
+        "Using sneak multiplier gloves": has_gloves,
+        "Seeker of Might damage boost": skill_seeker_of_might,
+        "Include Smithing improvement": tempering,
+        "Smithing Skill": smithing_level,
+        "Smithing Perk": smithing_perk_bonus,
+        "Smithing Enchantments": smithing_enchantment_bonus,
+        "Smithing Potion": smithing_potion_bonus,
+        "Smithing Seeker of Might bonus": smithing_seeker_of_might,
+        "Smithing Improvement Amount": temper_improvement,
+        "Displayed Damage": displayed_damage.__floor__(),
+        "Actual Damage": displayed_damage,
+        "Power Attack Damage": power_attack,
+        "Sneak Attack Damage": sneak_attack,
+        "Power Sneak Attack Damage": power_sneak_attack
+    })
+
+if st.session_state.damage_results:
+    damage_download_df = pd.DataFrame(st.session_state.damage_results)
+    st.table(damage_download_df[["Name","Weapon Type","Displayed Damage"]])
+
+    st.download_button(
+        label="Download CSV",
+        data=damage_download_df.to_csv(index=False),
+        file_name="results.csv",
+        mime="text/csv"
+    )
