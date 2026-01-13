@@ -19,7 +19,11 @@ if "damage_results" not in st.session_state:
 # Streamlit UI
 # -----------------------------
 
-st.set_page_config(page_title="Skyrim Weapon Damage Calculator", layout="centered")
+st.set_page_config(
+    page_title="Skyrim Weapon Damage Calculator", 
+    layout="centered",
+    page_icon=":abacus:",
+    )
 
 st.title("Skyrim Weapon Damage Calculator")
 st.markdown(
