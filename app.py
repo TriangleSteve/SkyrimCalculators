@@ -41,7 +41,7 @@ perk_name = WEAPON_DATA[weapon_type]["perk_name"]
 power_perk_name = WEAPON_DATA[weapon_type]["power_name"]
 
 base_damage = st.number_input(
-    "Weapon Base Damage (found on [UESP Weapon Reference](https://en.uesp.net/wiki/Skyrim:Weapons), e.g. Dragonbone Mace = 17)",
+    "Weapon Base Damage (found on [UESP Weapon Reference](https://en.uesp.net/wiki/Skyrim:Weapons#One-handed_Weapons), e.g. Dragonbone Mace = 17)",
     min_value=1,
     max_value=35,
     step=1,
