@@ -102,6 +102,21 @@ else:
 
 skill_seeker_of_might = st.checkbox("Seeker of Might (+10% damage)")
 
+
+# TODO add dual wield logic/calculations
+# if weapon_type in ("One-handed", "Dagger"):
+#     use_dual = st.checkbox("Calculate dual wield damage", value=False)
+
+#     if use_dual:
+#         dual_perk = st.checkbox("Dual Savagery perk", value=False)
+#         secondary_damage = st.number_input(
+#             "Enter displayed damage for left hand weapon (e.g. offhand Dragonbone dagger with One-handed 100 + Armsman 5 = 36)",
+#             min_value=0.0,
+#             value=39.0,
+#             format="%0.1f"
+#             )
+
+
 st.divider()
 
 
@@ -194,7 +209,7 @@ st.divider()
 
 st.header("Export")
 
-st.caption("Save any number of outputs to the browser session and download them in a single CSV for comparison and reference. Output will contain additional columns than the data displayed below.")
+st.caption("Save any number of outputs to the browser session and download them in a single CSV for comparison and reference. Export will include all inputs/outputs as columns.")
 
 weapon_output_name = st.text_input("(Optional) add an easy to remember name (e.g. Dragonbone Sword max without potions/enchanting)")
 if st.button("Save to session"):
