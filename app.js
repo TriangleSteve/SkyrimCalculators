@@ -114,6 +114,8 @@ function updateResults() {
 
   const r = getInputsAndResults();
   $("displayedDamage").textContent = Math.round(r.displayedDamage);
+  $("stickyDamage").textContent = Math.round(r.displayedDamage);
+  $("stickyWeapon").textContent = r.weaponType;
   $("actualDamage").textContent = `${r.displayedDamage.toFixed(1)} actual calculated damage`;
   $("normalAttack").textContent = r.displayedDamage.toFixed(1);
   $("powerAttack").textContent = r.powerAttack.toFixed(1);

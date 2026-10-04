@@ -1,17 +1,26 @@
 # Skyrim Weapon Damage Calculator
 
-Static GitHub Pages version of the original Streamlit calculator.
+A static, mobile-friendly Skyrim weapon damage calculator designed for GitHub Pages.
+
+## Stack
+
+- HTML
+- JavaScript
+- Pico CSS via CDN
+- Small custom CSS layer
+- No server, Python runtime, or build step required
 
 ## Run locally
 
-No build step or server-side runtime is required. Open `index.html` directly, or serve the folder with any simple static web server.
+Open `index.html` directly in a browser, or serve the folder with any simple static web server.
 
-## Deploy with GitHub Pages
+## GitHub Pages
 
-1. Put `index.html`, `styles.css`, and `app.js` at the repository root (or configure Pages to serve the folder containing them).
-2. In GitHub, open **Settings → Pages**.
-3. Under **Build and deployment**, choose **Deploy from a branch**.
-4. Select your main branch and the folder containing the static files.
-5. Save. GitHub will publish the site at your GitHub Pages URL.
+1. Push the files in this folder to the repository branch you want to publish.
+2. Open the repository on GitHub.
+3. Go to **Settings → Pages**.
+4. Under **Build and deployment**, select **Deploy from a branch**.
+5. Select the branch and the root (`/`) folder.
+6. Save.
 
-The old Python/Streamlit dependencies and `wake.py` are not needed for the static version.
+The app is fully client-side. Saved comparison rows live only in the current browser tab until exported to CSV.

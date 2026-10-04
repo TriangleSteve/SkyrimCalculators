@@ -1,4 +1,0 @@
-streamlit
-pandas
-selenium
-webdriver-manager

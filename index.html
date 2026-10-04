@@ -1,158 +1,189 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0d10" />
   <title>Skyrim Weapon Damage Calculator</title>
-  <meta name="description" content="Calculate displayed and effective Skyrim weapon damage from skills, perks, buffs, and smithing." />
+  <meta name="description" content="Calculate Skyrim weapon damage from skills, perks, buffs, smithing, sneak attacks, and power attacks." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
   <link rel="stylesheet" href="styles.css" />
   <script defer src="app.js"></script>
 </head>
 <body>
-  <main class="container">
-    <header class="hero">
-      <div>
-        <p class="eyebrow">Skyrim Calculator</p>
-        <h1>Weapon Damage Calculator</h1>
-        <p class="lede">Calculate displayed and effective weapon damage based on skills, perks, buffs, and smithing.</p>
+  <main class="container app-shell">
+    <header class="page-header">
+      <div class="title-row">
+        <img class="site-icon" src="favicon.svg" alt="" width="42" height="42" />
+        <div>
+          <p class="eyebrow">Skyrim Calculator</p>
+          <h1>Weapon Damage Calculator</h1>
+        </div>
       </div>
-      <div class="hero-mark" aria-hidden="true">⚔</div>
+      <p class="lede">Estimate displayed and effective weapon damage from skills, perks, buffs, and smithing.</p>
     </header>
 
-    <section class="card">
-      <h2>Weapon</h2>
-      <div class="grid two">
-        <label>
-          <span>Weapon Type</span>
-          <select id="weaponType">
-            <option>One-handed</option>
-            <option>Two-handed</option>
-            <option>Archery</option>
-            <option>Dagger</option>
-          </select>
-        </label>
-        <label>
-          <span>Weapon Base Damage</span>
-          <input id="baseDamage" type="number" min="1" max="35" step="1" value="18" />
-          <small><a href="https://en.uesp.net/wiki/Skyrim:Weapons#One-handed_Weapons" target="_blank" rel="noreferrer">UESP weapon reference</a></small>
-        </label>
-        <label id="ammoDamageField" class="hidden">
-          <span>Ammo Damage</span>
-          <input id="ammoDamage" type="number" min="4" max="35" step="1" value="24" />
-          <small><a href="https://en.uesp.net/wiki/Skyrim:Ammunition#Arrows" target="_blank" rel="noreferrer">UESP ammunition reference</a></small>
-        </label>
-      </div>
-    </section>
+    <aside class="damage-dock" aria-live="polite" aria-label="Current displayed weapon damage">
+      <span class="damage-dock-label">Displayed Damage</span>
+      <strong id="stickyDamage">0</strong>
+      <small id="stickyWeapon">One-handed</small>
+    </aside>
 
-    <section class="card">
-      <h2>Weapon Proficiency</h2>
-      <div class="grid two">
-        <label>
-          <span id="skillLevelLabel">One-handed Skill Level</span>
-          <div class="range-row">
-            <input id="skillLevel" type="range" min="15" max="100" value="100" />
-            <output id="skillLevelValue">100</output>
+    <section class="calculator-grid">
+      <div class="input-stack">
+        <article>
+          <header><h2>Weapon</h2></header>
+          <div class="form-grid">
+            <label>
+              Weapon Type
+              <select id="weaponType">
+                <option>One-handed</option>
+                <option>Two-handed</option>
+                <option>Archery</option>
+                <option>Dagger</option>
+              </select>
+            </label>
+
+            <label>
+              Weapon Base Damage
+              <input id="baseDamage" type="number" min="1" max="35" step="1" value="18" inputmode="numeric" />
+              <small><a href="https://en.uesp.net/wiki/Skyrim:Weapons#One-handed_Weapons" target="_blank" rel="noreferrer">UESP weapon reference</a></small>
+            </label>
+
+            <label id="ammoDamageField" class="hidden">
+              Ammo Damage
+              <input id="ammoDamage" type="number" min="4" max="35" step="1" value="24" inputmode="numeric" />
+              <small><a href="https://en.uesp.net/wiki/Skyrim:Ammunition#Arrows" target="_blank" rel="noreferrer">UESP ammunition reference</a></small>
+            </label>
           </div>
-        </label>
-        <label>
-          <span id="perkRankLabel">Armsman Perk Rank</span>
-          <div class="range-row">
-            <input id="perkRank" type="range" min="0" max="5" value="5" />
-            <output id="perkRankValue">5</output>
+        </article>
+
+        <article>
+          <header><h2>Weapon Proficiency</h2></header>
+          <div class="form-grid">
+            <label>
+              <span id="skillLevelLabel">One-handed Skill Level</span>
+              <div class="range-row">
+                <input id="skillLevel" type="range" min="15" max="100" value="100" />
+                <output id="skillLevelValue">100</output>
+              </div>
+            </label>
+
+            <label>
+              <span id="perkRankLabel">Armsman Perk Rank</span>
+              <div class="range-row">
+                <input id="perkRank" type="range" min="0" max="5" value="5" />
+                <output id="perkRankValue">5</output>
+              </div>
+            </label>
+
+            <label id="enchantmentField">
+              <span id="enchantmentLabel">Sum of Fortify One-handed Enchantments (%)</span>
+              <input id="enchantmentBonus" type="number" min="0" step="1" value="120" inputmode="decimal" />
+            </label>
+
+            <label id="potionField">
+              <span id="potionLabel">Fortify One-handed Potion (%)</span>
+              <input id="potionBonus" type="number" min="0" step="1" value="50" inputmode="decimal" />
+            </label>
           </div>
-        </label>
-        <label id="enchantmentField">
-          <span id="enchantmentLabel">Sum of Fortify One-handed Enchantments (%)</span>
-          <input id="enchantmentBonus" type="number" min="0" step="1" value="120" />
-        </label>
-        <label id="potionField">
-          <span id="potionLabel">Fortify One-handed Potion (%)</span>
-          <input id="potionBonus" type="number" min="0" step="1" value="50" />
-        </label>
-      </div>
 
-      <div class="checks">
-        <label id="powerPerkField"><input id="powerPerk" type="checkbox" /> <span id="powerPerkLabel">Savage Strike perk (25% standing power attack bonus with One-handed)</span></label>
-        <label id="glovesField"><input id="gloves" type="checkbox" /> Using sneak multiplier gloves (e.g. Cicero's gloves)</label>
-        <label><input id="seekerMight" type="checkbox" /> Seeker of Might (+10% damage)</label>
-      </div>
-    </section>
+          <fieldset class="check-list">
+            <label id="powerPerkField"><input id="powerPerk" type="checkbox" role="switch" /> <span id="powerPerkLabel">Savage Strike perk (25% standing power attack bonus with One-handed)</span></label>
+            <label id="glovesField"><input id="gloves" type="checkbox" role="switch" /> Sneak multiplier gloves</label>
+            <label><input id="seekerMight" type="checkbox" role="switch" /> Seeker of Might (+10% damage)</label>
+          </fieldset>
+        </article>
 
-    <section class="card">
-      <h2>Smithing</h2>
-      <label class="toggle-row"><input id="tempering" type="checkbox" /> Include weapon improvement (tempering)</label>
-      <div id="smithingFields" class="smithing-fields hidden">
-        <div class="grid two">
-          <label>
-            <span>Smithing Skill Level</span>
-            <div class="range-row">
-              <input id="smithingLevel" type="range" min="15" max="100" value="100" />
-              <output id="smithingLevelValue">100</output>
+        <article>
+          <header><h2>Smithing</h2></header>
+          <label class="switch-line"><input id="tempering" type="checkbox" role="switch" /> Include weapon improvement (tempering)</label>
+
+          <div id="smithingFields" class="smithing-fields hidden">
+            <div class="form-grid smithing-grid">
+              <label>
+                Smithing Skill Level
+                <div class="range-row">
+                  <input id="smithingLevel" type="range" min="15" max="100" value="100" />
+                  <output id="smithingLevelValue">100</output>
+                </div>
+              </label>
+
+              <label>
+                Smithing Enchantments (%)
+                <input id="smithingEnchantment" type="number" min="0" step="1" value="75" inputmode="decimal" />
+              </label>
+
+              <label>
+                Smithing Potion (%)
+                <input id="smithingPotion" type="number" min="0" step="1" value="50" inputmode="decimal" />
+              </label>
             </div>
-          </label>
+
+            <fieldset class="check-list compact">
+              <label><input id="smithingPerk" type="checkbox" role="switch" /> Has associated smithing perk</label>
+              <label><input id="smithingSeeker" type="checkbox" role="switch" /> Seeker of Might (+10% smithing)</label>
+            </fieldset>
+          </div>
+        </article>
+      </div>
+
+      <aside class="results-column">
+        <article class="results-card">
+          <header class="results-header">
+            <div>
+              <p class="eyebrow">Live Result</p>
+              <h2>Damage</h2>
+            </div>
+            <span class="live-dot" aria-label="Updates automatically"></span>
+          </header>
+
+          <div class="main-result">
+            <span>Displayed Weapon Damage</span>
+            <strong id="displayedDamage">0</strong>
+            <small id="actualDamage">0.0 actual calculated damage</small>
+          </div>
+
+          <details class="result-details">
+            <summary>Show attack breakdown</summary>
+            <div class="result-list">
+              <div><span>Normal Attack</span><strong id="normalAttack">0.0</strong></div>
+              <div><span>Power Attack</span><strong id="powerAttack">0.0</strong></div>
+              <div><span>Sneak Attack</span><strong id="sneakAttack">0.0</strong></div>
+              <div><span>Power Sneak Attack</span><strong id="powerSneakAttack">0.0</strong></div>
+            </div>
+          </details>
+        </article>
+
+        <article>
+          <header><h2>Compare & Export</h2></header>
+          <p class="muted">Save builds during this session and export them together as CSV.</p>
           <label>
-            <span>Smithing Enchantments (%)</span>
-            <input id="smithingEnchantment" type="number" min="0" step="1" value="75" />
+            Optional name
+            <input id="resultName" type="text" placeholder="e.g. Dragonbone Sword, no potion" />
           </label>
-          <label>
-            <span>Smithing Potion (%)</span>
-            <input id="smithingPotion" type="number" min="0" step="1" value="50" />
-          </label>
-        </div>
-        <div class="checks">
-          <label><input id="smithingPerk" type="checkbox" /> Has associated smithing perk</label>
-          <label><input id="smithingSeeker" type="checkbox" /> Seeker of Might (+10% smithing)</label>
-        </div>
-      </div>
+          <div class="button-grid">
+            <button id="saveResult" type="button">Save result</button>
+            <button id="downloadCsv" type="button" class="secondary" disabled>Download CSV</button>
+            <button id="clearResults" type="button" class="outline contrast" disabled>Clear saved</button>
+          </div>
+
+          <div id="savedResultsWrap" class="saved-results hidden">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Name</th><th>Type</th><th>Damage</th></tr></thead>
+                <tbody id="savedResults"></tbody>
+              </table>
+            </div>
+          </div>
+        </article>
+      </aside>
     </section>
 
-    <section class="card results-card">
-      <div class="section-heading">
-        <h2>Results</h2>
-        <span class="live-badge">Live</span>
-      </div>
-      <div class="metric">
-        <span>Displayed Weapon Damage</span>
-        <strong id="displayedDamage">0</strong>
-        <small id="actualDamage">0.0 actual calculated damage</small>
-      </div>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr><th></th><th>Normal Attack</th><th>Sneak Attack</th></tr>
-          </thead>
-          <tbody>
-            <tr><th>Normal Attack</th><td id="normalAttack">0.0</td><td id="sneakAttack">0.0</td></tr>
-            <tr><th>Power Attack</th><td id="powerAttack">0.0</td><td id="powerSneakAttack">0.0</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <section class="card">
-      <h2>Export</h2>
-      <p class="muted">Save any number of outputs in this browser tab and download them as one CSV for comparison.</p>
-      <label>
-        <span>Optional name</span>
-        <input id="resultName" type="text" placeholder="e.g. Dragonbone Sword max without potions/enchanting" />
-      </label>
-      <div class="button-row">
-        <button id="saveResult" type="button">Save result</button>
-        <button id="downloadCsv" type="button" class="secondary" disabled>Download CSV</button>
-        <button id="clearResults" type="button" class="ghost" disabled>Clear saved</button>
-      </div>
-
-      <div id="savedResultsWrap" class="table-wrap hidden">
-        <table>
-          <thead><tr><th>Name</th><th>Weapon Type</th><th>Displayed Damage</th></tr></thead>
-          <tbody id="savedResults"></tbody>
-        </table>
-      </div>
-    </section>
-
-    <footer>
-      Formula references: <a href="https://en.uesp.net/wiki/Skyrim:Weapons" target="_blank" rel="noreferrer">Weapons</a>,
+    <footer class="site-footer">
+      Formula references:
+      <a href="https://en.uesp.net/wiki/Skyrim:Weapons" target="_blank" rel="noreferrer">Weapons</a>,
       <a href="https://en.uesp.net/wiki/Skyrim:Damage" target="_blank" rel="noreferrer">Damage</a>, and
       <a href="https://en.uesp.net/wiki/Skyrim:Smithing" target="_blank" rel="noreferrer">Smithing</a> on UESP.
     </footer>
