@@ -10,6 +10,16 @@ A static, mobile-friendly Skyrim weapon damage calculator designed for GitHub Pa
 - Small custom CSS layer
 - No server, Python runtime, or build step required
 
+
+## How to use
+
+1. Choose the weapon type and enter its base damage. Archery also lets you enter ammunition damage.
+2. Set your relevant weapon skill, perk rank, enchantment bonuses, potion bonus, and any optional combat perks or buffs.
+3. Turn on **weapon improvement (tempering)** if the weapon has been smithed, then enter the smithing skill and bonuses that applied.
+4. The sticky **Displayed Damage** value at the top updates automatically as you change inputs.
+5. The **Damage** section shows the underlying calculated damage plus normal, power, sneak, and power-sneak attack totals.
+6. Expand **Compare & Export** if you want to save multiple builds during the current session and download them together as a CSV file.
+
 ## Run locally
 
 Open `index.html` directly in a browser, or serve the folder with any simple static web server.

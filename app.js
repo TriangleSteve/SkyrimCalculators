@@ -113,10 +113,9 @@ function updateResults() {
   $("smithingLevelValue").textContent = $("smithingLevel").value;
 
   const r = getInputsAndResults();
-  $("displayedDamage").textContent = Math.round(r.displayedDamage);
   $("stickyDamage").textContent = Math.round(r.displayedDamage);
   $("stickyWeapon").textContent = r.weaponType;
-  $("actualDamage").textContent = `${r.displayedDamage.toFixed(1)} actual calculated damage`;
+  $("actualDamage").textContent = r.displayedDamage.toFixed(1);
   $("normalAttack").textContent = r.displayedDamage.toFixed(1);
   $("powerAttack").textContent = r.powerAttack.toFixed(1);
   $("sneakAttack").textContent = r.sneakAttack.toFixed(1);

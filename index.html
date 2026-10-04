@@ -20,7 +20,7 @@
           <h1>Weapon Damage Calculator</h1>
         </div>
       </div>
-      <p class="lede">Estimate displayed and effective weapon damage from skills, perks, buffs, and smithing.</p>
+      <p class="lede">Estimate weapon damage from skills, perks, buffs, smithing, and combat modifiers.</p>
     </header>
 
     <aside class="damage-dock" aria-live="polite" aria-label="Current displayed weapon damage">
@@ -138,44 +138,40 @@
             <span class="live-dot" aria-label="Updates automatically"></span>
           </header>
 
-          <div class="main-result">
-            <span>Displayed Weapon Damage</span>
-            <strong id="displayedDamage">0</strong>
-            <small id="actualDamage">0.0 actual calculated damage</small>
+          <div class="result-list result-list-always">
+            <div><span>Calculated Damage</span><strong id="actualDamage">0.0</strong></div>
+            <div><span>Normal Attack</span><strong id="normalAttack">0.0</strong></div>
+            <div><span>Power Attack</span><strong id="powerAttack">0.0</strong></div>
+            <div><span>Sneak Attack</span><strong id="sneakAttack">0.0</strong></div>
+            <div><span>Power Sneak Attack</span><strong id="powerSneakAttack">0.0</strong></div>
           </div>
-
-          <details class="result-details">
-            <summary>Show attack breakdown</summary>
-            <div class="result-list">
-              <div><span>Normal Attack</span><strong id="normalAttack">0.0</strong></div>
-              <div><span>Power Attack</span><strong id="powerAttack">0.0</strong></div>
-              <div><span>Sneak Attack</span><strong id="sneakAttack">0.0</strong></div>
-              <div><span>Power Sneak Attack</span><strong id="powerSneakAttack">0.0</strong></div>
-            </div>
-          </details>
         </article>
 
         <article>
-          <header><h2>Compare & Export</h2></header>
-          <p class="muted">Save builds during this session and export them together as CSV.</p>
-          <label>
-            Optional name
-            <input id="resultName" type="text" placeholder="e.g. Dragonbone Sword, no potion" />
-          </label>
-          <div class="button-grid">
-            <button id="saveResult" type="button">Save result</button>
-            <button id="downloadCsv" type="button" class="secondary" disabled>Download CSV</button>
-            <button id="clearResults" type="button" class="outline contrast" disabled>Clear saved</button>
-          </div>
+          <details class="compare-details">
+            <summary><span>Compare &amp; Export</span><small>Save and export builds</small></summary>
+            <div class="compare-body">
+              <p class="muted">Save builds during this session and export them together as CSV.</p>
+              <label>
+                Optional name
+                <input id="resultName" type="text" placeholder="e.g. Dragonbone Sword, no potion" />
+              </label>
+              <div class="button-grid">
+                <button id="saveResult" type="button">Save result</button>
+                <button id="downloadCsv" type="button" class="secondary" disabled>Download CSV</button>
+                <button id="clearResults" type="button" class="outline contrast" disabled>Clear saved</button>
+              </div>
 
-          <div id="savedResultsWrap" class="saved-results hidden">
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Name</th><th>Type</th><th>Damage</th></tr></thead>
-                <tbody id="savedResults"></tbody>
-              </table>
+              <div id="savedResultsWrap" class="saved-results hidden">
+                <div class="table-wrap">
+                  <table>
+                    <thead><tr><th>Name</th><th>Type</th><th>Damage</th></tr></thead>
+                    <tbody id="savedResults"></tbody>
+                  </table>
+                </div>
+              </div>
             </div>
-          </div>
+          </details>
         </article>
       </aside>
     </section>

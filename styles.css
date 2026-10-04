@@ -469,3 +469,53 @@ input[type="checkbox"][role="switch"]::before {
     grid-column: auto;
   }
 }
+
+
+/* v4 result/compare refinements */
+.result-list-always {
+  margin-top: 0;
+  border-top: 0;
+}
+
+.result-list-always > div:first-child {
+  padding-top: 0.15rem;
+}
+
+.result-list-always > div:first-child strong {
+  color: #f3d992;
+  font-size: 1.18rem;
+}
+
+.compare-details {
+  margin: 0;
+}
+
+.compare-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.compare-details summary span {
+  font-size: 1.02rem;
+}
+
+.compare-details summary small {
+  color: var(--pico-muted-color);
+  font-weight: 500;
+}
+
+.compare-body {
+  padding-top: 1rem;
+}
+
+@media (max-width: 640px) {
+  .compare-details summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+}
