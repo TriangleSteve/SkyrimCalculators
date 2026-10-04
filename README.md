@@ -34,3 +34,11 @@ Open `index.html` directly in a browser, or serve the folder with any simple sta
 6. Save.
 
 The app is fully client-side. Saved comparison rows live only in the current browser tab until exported to CSV.
+
+## Source and contributions
+
+The source code is available at [github.com/TriangleSteve/SkyrimCalculators](https://github.com/TriangleSteve/SkyrimCalculators/). Forks, stars, issues, and pull requests are welcome.
+
+## AI use disclosure
+
+AI assistance was used to help convert the original Python/Streamlit implementation into this static HTML, CSS, and JavaScript version. The calculator logic and behavior were adapted from the original app and reviewed during the conversion.
